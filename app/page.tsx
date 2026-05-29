@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, Mail } from "lucide-react";
+import { publicPath } from "@/lib/paths";
 
 type TechItem = {
   name: string;
@@ -12,29 +13,29 @@ const techGroups: Array<{ title: string; items: TechItem[] }> = [
   {
     title: "Cloud & DevOps",
     items: [
-      { name: "AWS", image: "/images/tech/aws.svg", iconClassName: "h-12 w-12" },
-      { name: "Azure", image: "/images/tech/azure.svg" },
-      { name: "NCP", image: "/images/tech/ncp.svg", iconClassName: "h-[58px] w-[58px]" },
-      { name: "Docker", image: "/images/tech/docker.svg" },
-      { name: "GitHub Actions", image: "/images/tech/github-actions.svg" },
-      { name: "Jenkins", image: "/images/tech/jenkins.svg" },
+      { name: "AWS", image: publicPath("/images/tech/aws.svg"), iconClassName: "h-12 w-12" },
+      { name: "Azure", image: publicPath("/images/tech/azure.svg") },
+      { name: "NCP", image: publicPath("/images/tech/ncp.svg"), iconClassName: "h-[58px] w-[58px]" },
+      { name: "Docker", image: publicPath("/images/tech/docker.svg") },
+      { name: "GitHub Actions", image: publicPath("/images/tech/github-actions.svg") },
+      { name: "Jenkins", image: publicPath("/images/tech/jenkins.svg") },
     ],
   },
   {
     title: "Backend & Language",
     items: [
-      { name: "Java", image: "/images/tech/java.svg", iconClassName: "h-[46px] w-[46px]" },
-      { name: "Python", image: "/images/tech/python.svg" },
-      { name: "Spring Boot", image: "/images/tech/spring-boot.svg" },
-      { name: "Shell Script", image: "/images/tech/shell.svg", iconClassName: "h-16 w-16" },
+      { name: "Java", image: publicPath("/images/tech/java.svg"), iconClassName: "h-[46px] w-[46px]" },
+      { name: "Python", image: publicPath("/images/tech/python.svg") },
+      { name: "Spring Boot", image: publicPath("/images/tech/spring-boot.svg") },
+      { name: "Shell Script", image: publicPath("/images/tech/shell.svg"), iconClassName: "h-16 w-16" },
     ],
   },
   {
     title: "Monitoring",
     items: [
-      { name: "Prometheus", image: "/images/tech/prometheus.svg" },
-      { name: "Grafana", image: "/images/tech/grafana.svg" },
-      { name: "CloudWatch", image: "/images/tech/cloudwatch.svg", iconClassName: "h-16 w-16" },
+      { name: "Prometheus", image: publicPath("/images/tech/prometheus.svg") },
+      { name: "Grafana", image: publicPath("/images/tech/grafana.svg") },
+      { name: "CloudWatch", image: publicPath("/images/tech/cloudwatch.svg"), iconClassName: "h-16 w-16" },
     ],
   },
 ];
@@ -66,7 +67,7 @@ function VisualHero() {
   return (
     <section aria-label="Visual hero">
       <Image
-        src="/images/hero-visual.jpg"
+        src={publicPath("/images/hero-visual.jpg")}
         alt=""
         width={1024}
         height={314}
@@ -120,7 +121,7 @@ export default function HomePage() {
           className="mt-10 block rounded-xl border border-border bg-background p-5 transition-colors hover:border-muted-foreground"
         >
           <Image
-            src="/images/architecture-preview.png"
+            src={publicPath("/images/architecture-preview.png")}
             alt="Architecture preview"
             width={1200}
             height={760}
@@ -138,7 +139,7 @@ export default function HomePage() {
             target="_blank"
             className="flex items-center gap-3 rounded-lg border border-border bg-card p-4 transition-colors hover:bg-accent/10"
           >
-            <Image src="/images/GitHub.svg" alt="" width={28} height={28} className="h-7 w-7 shrink-0" />
+            <Image src={publicPath("/images/GitHub.svg")} alt="" width={28} height={28} className="h-7 w-7 shrink-0" />
             <span className="min-w-0 flex-1">
               <span className="block text-sm font-medium">GitHub</span>
               <span className="mt-1 block truncate text-sm text-muted-foreground">github.com/imjwoo</span>

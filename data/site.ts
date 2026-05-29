@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Wrench,
 } from "lucide-react";
+import { publicPath } from "@/lib/paths";
 
 export const navItems = [
   { title: "Home", href: "/", icon: Home },
@@ -84,7 +85,7 @@ export const projects: Project[] = [
     meta: "Spring PetClinic 오픈소스 기반 개인 프로젝트",
     summary:
       "Spring PetClinic 오픈소스를 MSA 구조로 전환하고, AWS 기반 3-tier 인프라와 배포 자동화 흐름을 설계하는 프로젝트입니다.",
-    coverImage: "/images/projects/petclinic-cover.svg",
+    coverImage: publicPath("/images/projects/petclinic-cover.svg"),
     github: "https://github.com/imjwoo/spring-petclinic-microservices",
     tech: [
       "Spring Boot",
@@ -112,12 +113,12 @@ export const projects: Project[] = [
     ],
     images: [
       {
-        src: "/images/projects/petclinic-architecture.svg",
+        src: publicPath("/images/projects/petclinic-architecture.svg"),
         alt: "Petclinic MSA architecture placeholder",
         caption: "Architecture draft",
       },
       {
-        src: "/images/projects/petclinic-deployment.svg",
+        src: publicPath("/images/projects/petclinic-deployment.svg"),
         alt: "Petclinic deployment flow placeholder",
         caption: "Deployment flow",
       },
@@ -159,7 +160,7 @@ export const projects: Project[] = [
     meta: "경기도 일자리재단 클라우드 운영자 과정 팀 프로젝트",
     summary:
       "풋살 매칭 플랫폼을 AWS 3-tier 아키텍처 위에 배포하고, ECS Fargate와 GitHub Actions 기반 CI/CD를 구성한 팀 프로젝트입니다.",
-    coverImage: "/images/projects/kickytime-cover.svg",
+    coverImage: publicPath("/images/projects/kickytime-cover.svg"),
     github: "https://github.com/imjwoo/next-kickytime-server",
     tech: [
       "AWS ECS",
@@ -188,12 +189,12 @@ export const projects: Project[] = [
     ],
     images: [
       {
-        src: "/images/architecture-preview.png",
+        src: publicPath("/images/architecture-preview.png"),
         alt: "Kickytime AWS architecture",
         caption: "AWS 3-tier architecture",
       },
       {
-        src: "/images/projects/kickytime-deployment.svg",
+        src: publicPath("/images/projects/kickytime-deployment.svg"),
         alt: "Kickytime deployment flow placeholder",
         caption: "CI/CD deployment flow",
       },
@@ -230,7 +231,7 @@ export const projects: Project[] = [
     meta: "멘토링 기반 학습 플랫폼",
     summary:
       "멘토와 학습자를 연결하는 서비스로, 강의 탐색, 질문, 메시지, 알림, 프로필 등 학습 커뮤니티 흐름을 다루는 프로젝트입니다.",
-    coverImage: "/images/projects/mentoss-cover.svg",
+    coverImage: publicPath("/images/projects/mentoss-cover.svg"),
     github: "https://github.com/1000hyehyang/mentos-frontend",
     tech: ["React", "Vite", "JavaScript", "MUI", "Axios", "Zustand", "Tiptap", "Spring Boot"],
     role: [
@@ -246,12 +247,12 @@ export const projects: Project[] = [
     ],
     images: [
       {
-        src: "/images/projects/mentoss-architecture.png",
+        src: publicPath("/images/projects/mentoss-architecture.png"),
         alt: "Mentoss architecture",
         caption: "Service architecture",
       },
       {
-        src: "/images/projects/mentoss-logo.svg",
+        src: publicPath("/images/projects/mentoss-logo.svg"),
         alt: "Mentoss logo",
         caption: "Project identity",
       },

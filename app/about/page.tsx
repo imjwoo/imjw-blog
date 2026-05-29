@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Download } from "lucide-react";
+import { publicPath } from "@/lib/paths";
 
 type TimelineItem = {
   title: string;
@@ -24,7 +25,7 @@ const education: TimelineItem[] = [
     title: "INHA University",
     description: "Bachelor of Arts in Economics",
     period: "Education",
-    logo: "/images/about/inha-university.svg",
+    logo: publicPath("/images/about/inha-university.svg"),
     logoAlt: "INHA University logo",
   },
 ];
@@ -34,7 +35,7 @@ const experience: TimelineItem[] = [
     title: "AI Champion Advanced Course",
     description: "AI Education Assistant Instructor (Part-time)",
     period: "2025.05 ~ Present",
-    logo: "/images/about/ai-champion.svg",
+    logo: publicPath("/images/about/ai-champion.svg"),
     logoAlt: "AI Champion logo",
     activities: [
       "공무원·공공기관 종사자 대상 AI 실전 역량 강화 교육 보조",
@@ -46,7 +47,7 @@ const experience: TimelineItem[] = [
     title: "TOBE System",
     description: "Web Development Team, Assistant Manager",
     period: "2022.04 ~ 2024.09",
-    logo: "/images/about/tobe-system.svg",
+    logo: publicPath("/images/about/tobe-system.svg"),
     logoAlt: "TOBE System logo",
     activities: [
       "MES 웹 개발 및 운영 유지보수",
@@ -61,14 +62,14 @@ const certifications: CertificationItem[] = [
     title: "Linux Master Level 2",
     issuer: "KAIT",
     date: "2026.04",
-    logo: "/images/about/linux-master.svg",
+    logo: publicPath("/images/about/linux-master.svg"),
     logoAlt: "Linux Master badge",
   },
   {
     title: "Network Administrator Level 2",
     issuer: "ICQA",
     date: "2026.03",
-    logo: "/images/about/network-manager.svg",
+    logo: publicPath("/images/about/network-manager.svg"),
     logoAlt: "Network Administrator badge",
   },
 ];
@@ -78,7 +79,7 @@ const training: TimelineItem[] = [
     title: "Gyeonggi Job Foundation",
     description: "Cloud Operator Course",
     period: "2025.07 ~ 2025.08",
-    logo: "/images/about/gyeonggi-job-foundation.svg",
+    logo: publicPath("/images/about/gyeonggi-job-foundation.svg"),
     logoAlt: "Gyeonggi Job Foundation logo",
     activities: ["AWS 중심 인프라 설계 및 운영, ECS·RDS·ALB·VPC·Terraform 실습"],
   },
@@ -86,7 +87,7 @@ const training: TimelineItem[] = [
     title: "Programmers",
     description: "Generative AI Backend Developer Course",
     period: "2025.01 ~ 2025.06",
-    logo: "/images/about/programmers.svg",
+    logo: publicPath("/images/about/programmers.svg"),
     logoAlt: "Programmers logo",
     activities: ["Spring Boot·React 풀스택, AI API 연동, CI/CD 자동화, AWS 인프라 구축"],
   },
@@ -94,7 +95,7 @@ const training: TimelineItem[] = [
     title: "Ansan Green Computer Academy",
     description: "Java-based Developer Course",
     period: "2021.09 ~ 2022.04",
-    logo: "/images/about/ansan-green-computer.svg",
+    logo: publicPath("/images/about/ansan-green-computer.svg"),
     logoAlt: "Ansan Green Computer Academy logo",
     activities: ["Java, Spring 기반 백엔드 개발 기초"],
   },
@@ -158,7 +159,7 @@ export default function AboutPage() {
         <div className="flex items-start gap-5">
           <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border border-border bg-muted">
             <Image
-              src="/images/about/profile-placeholder.svg"
+              src={publicPath("/images/about/profile-placeholder.svg")}
               alt="Profile placeholder"
               fill
               sizes="80px"
@@ -174,7 +175,7 @@ export default function AboutPage() {
           </div>
         </div>
         <Link
-          href="/files/portfolio.pdf"
+          href={publicPath("/files/portfolio.pdf")}
           download
           className="group inline-flex shrink-0 items-center gap-3 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium transition-colors hover:border-foreground sm:mt-5"
         >
