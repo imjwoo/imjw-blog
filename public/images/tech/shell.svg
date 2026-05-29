@@ -1,0 +1,16 @@
+<svg width="500" height="500" viewBox="0 0 680 500" xmlns="http://www.w3.org/2000/svg">
+  <title>Shell script icon</title>
+  <desc>3D-style hexagonal cube icon with a terminal prompt symbol</desc>
+
+  <!-- Top face (light gray) -->
+  <polygon points="340,95 460,163 340,231 220,163" fill="#e8e8e8" stroke="#c0c0c0" stroke-width="1.5"/>
+  <!-- Left face (white) -->
+  <polygon points="220,163 340,231 340,395 220,327" fill="#ffffff" stroke="#c0c0c0" stroke-width="1.5"/>
+  <!-- Right face (dark) -->
+  <polygon points="340,231 460,163 460,327 340,395" fill="#2d2d2d" stroke="#1a1a1a" stroke-width="1.5"/>
+
+  <!-- $ symbol -->
+  <text x="375" y="295" font-family="monospace" font-size="52" font-weight="700" fill="#ffffff" text-anchor="middle">$</text>
+  <!-- green cursor dash -->
+  <rect x="400" y="308" width="28" height="7" rx="2" fill="#4caf50"/>
+</svg>

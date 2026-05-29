@@ -1,0 +1,15 @@
+<svg width="960" height="540" viewBox="0 0 960 540" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="540" fill="#FFFFFF"/>
+  <rect x="72" y="72" width="816" height="396" rx="18" fill="#FAFAFA" stroke="#E1E1E1"/>
+  <rect x="130" y="142" width="160" height="90" rx="16" fill="white" stroke="#E1E1E1"/>
+  <rect x="400" y="142" width="160" height="90" rx="16" fill="white" stroke="#E1E1E1"/>
+  <rect x="670" y="142" width="160" height="90" rx="16" fill="white" stroke="#E1E1E1"/>
+  <rect x="264" y="308" width="160" height="90" rx="16" fill="white" stroke="#E1E1E1"/>
+  <rect x="536" y="308" width="160" height="90" rx="16" fill="white" stroke="#E1E1E1"/>
+  <path d="M290 187H400M560 187H670M480 232V308M424 353H536" stroke="#D6D6D6" stroke-width="2"/>
+  <text x="210" y="192" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#111111">ALB</text>
+  <text x="480" y="192" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#111111">Services</text>
+  <text x="750" y="192" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#111111">ECS</text>
+  <text x="344" y="358" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#111111">ECR</text>
+  <text x="616" y="358" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#111111">Monitoring</text>
+</svg>

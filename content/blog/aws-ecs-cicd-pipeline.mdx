@@ -1,0 +1,18 @@
+---
+title: "AWS ECS와 GitHub Actions로 배포 파이프라인 구성하기"
+date: "2026-05-12"
+category: "DevOps"
+tags: ["AWS", "ECS", "GitHub Actions", "CI/CD"]
+---
+
+## 배포 흐름
+
+GitHub Actions에서 Docker 이미지를 빌드하고 ECR에 푸시한 뒤 ECS 서비스를 업데이트하는 구조입니다.
+
+## ECR 이미지 빌드
+
+브랜치 전략, 이미지 태그, 권한 범위를 함께 정리합니다.
+
+## ECS 서비스 업데이트
+
+Task Definition 개정과 서비스 배포를 분리해서 기록합니다.

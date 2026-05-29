@@ -1,0 +1,19 @@
+<svg width="960" height="600" viewBox="0 0 960 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="600" fill="#FAFAFA"/>
+  <path d="M180 210H372M588 210H780M180 390H372M588 390H780M480 260V340" stroke="#E6E6E6" stroke-width="2"/>
+  <rect x="372" y="160" width="216" height="100" rx="18" fill="white" stroke="#E1E1E1"/>
+  <rect x="372" y="340" width="216" height="100" rx="18" fill="white" stroke="#E1E1E1"/>
+  <rect x="120" y="160" width="120" height="100" rx="18" fill="white" stroke="#E1E1E1"/>
+  <rect x="720" y="160" width="120" height="100" rx="18" fill="white" stroke="#E1E1E1"/>
+  <rect x="120" y="340" width="120" height="100" rx="18" fill="white" stroke="#E1E1E1"/>
+  <rect x="720" y="340" width="120" height="100" rx="18" fill="white" stroke="#E1E1E1"/>
+  <circle cx="480" cy="210" r="20" fill="#111111"/>
+  <circle cx="480" cy="390" r="20" fill="#111111"/>
+  <circle cx="180" cy="210" r="16" fill="#6DB33F"/>
+  <circle cx="780" cy="210" r="16" fill="#111111"/>
+  <circle cx="180" cy="390" r="16" fill="#F58536"/>
+  <circle cx="780" cy="390" r="16" fill="#F58536"/>
+  <text x="480" y="214" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="white">MSA</text>
+  <text x="480" y="394" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="white">ECS</text>
+  <text x="480" y="526" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="700" fill="#111111">Petclinic MSA</text>
+</svg>

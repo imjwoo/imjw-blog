@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 20 8% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 20 8% 10%;
+  --primary: 22 84% 48%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 30 14% 95%;
+  --secondary-foreground: 20 8% 10%;
+  --muted: 30 14% 95%;
+  --muted-foreground: 25 6% 45%;
+  --accent: 30 14% 95%;
+  --accent-foreground: 20 8% 10%;
+  --border: 24 16% 90%;
+  --input: 24 16% 90%;
+  --ring: 22 84% 48%;
+  --font-sans: "Pretendard", Inter, "Noto Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+.dark {
+  --background: 20 8% 10%;
+  --foreground: 30 14% 95%;
+  --card: 20 8% 10%;
+  --card-foreground: 30 14% 95%;
+  --primary: 22 84% 48%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 20 6% 15%;
+  --secondary-foreground: 30 14% 95%;
+  --muted: 20 6% 15%;
+  --muted-foreground: 24 5% 65%;
+  --accent: 20 6% 15%;
+  --accent-foreground: 30 14% 95%;
+  --border: 20 5% 22%;
+  --input: 20 5% 22%;
+  --ring: 22 84% 48%;
+}
+
+* {
+  @apply border-border;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+}
+
+::selection {
+  @apply bg-primary/20 text-foreground;
+}
+
+.section-label {
+  @apply text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground;
+}
+
+.terminal-surface {
+  @apply overflow-hidden border bg-card font-mono text-sm;
+}
+
+.prose-cloud {
+  @apply text-[16px] leading-8 text-muted-foreground;
+}
+
+.prose-cloud h2 {
+  @apply mt-14 border-b pb-4 text-xl font-semibold text-foreground;
+}
+
+.prose-cloud h3 {
+  @apply mt-10 text-base font-semibold text-foreground;
+}
+
+.prose-cloud p {
+  @apply mt-5;
+}
+
+.prose-cloud ul {
+  @apply mt-5 list-disc space-y-3 pl-5;
+}

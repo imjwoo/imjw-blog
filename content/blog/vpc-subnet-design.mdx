@@ -1,0 +1,18 @@
+---
+title: "VPC Public/Private Subnet 설계 기준"
+date: "2026-05-08"
+category: "Cloud"
+tags: ["VPC", "Subnet", "RDS", "ALB"]
+---
+
+## 왜 서브넷을 나누는가
+
+외부 트래픽 진입점과 내부 리소스를 분리해 보안 경계를 명확히 합니다.
+
+## Public 영역
+
+ALB와 NAT Gateway처럼 인터넷 경로가 필요한 리소스를 배치합니다.
+
+## Private 영역
+
+애플리케이션 컨테이너와 데이터베이스처럼 직접 노출되지 않아야 하는 리소스를 배치합니다.

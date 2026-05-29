@@ -1,0 +1,12 @@
+<svg width="960" height="540" viewBox="0 0 960 540" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="960" height="540" fill="#FFFFFF"/>
+  <rect x="102" y="180" width="180" height="110" rx="18" fill="#FAFAFA" stroke="#E1E1E1"/>
+  <rect x="390" y="180" width="180" height="110" rx="18" fill="#FAFAFA" stroke="#E1E1E1"/>
+  <rect x="678" y="180" width="180" height="110" rx="18" fill="#FAFAFA" stroke="#E1E1E1"/>
+  <path d="M282 235H390M570 235H678" stroke="#D6D6D6" stroke-width="2"/>
+  <path d="M480 290V370H768V290" stroke="#E6E6E6" stroke-width="2"/>
+  <text x="192" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#111111">Build</text>
+  <text x="480" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#111111">Push ECR</text>
+  <text x="768" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#111111">Deploy ECS</text>
+  <text x="624" y="410" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#777777">ALB health check</text>
+</svg>
