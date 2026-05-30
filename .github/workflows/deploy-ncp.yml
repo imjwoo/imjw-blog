@@ -37,9 +37,13 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: kr-standard
         run: |
+          aws configure set request_checksum_calculation when_required
+          aws configure set response_checksum_validation when_required
+
           printf "ncp deploy permission check\n" > /tmp/ncp-deploy-check.txt
           aws s3 cp /tmp/ncp-deploy-check.txt s3://imjw-blog/.deploy-check.txt \
             --endpoint-url https://kr.object.ncloudstorage.com \
+            --acl public-read \
             --only-show-errors
           aws s3 rm s3://imjw-blog/.deploy-check.txt \
             --endpoint-url https://kr.object.ncloudstorage.com \
@@ -47,4 +51,5 @@ jobs:
 
           aws s3 sync out s3://imjw-blog/ \
             --endpoint-url https://kr.object.ncloudstorage.com \
+            --acl public-read \
             --only-show-errors
