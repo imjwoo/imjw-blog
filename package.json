@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:ncp": "NCP_DEPLOY=true next build",
+    "build:ncp": "next build",
     "start": "next start",
     "lint": "eslint ."
   },
