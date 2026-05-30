@@ -40,15 +40,6 @@ jobs:
           aws configure set request_checksum_calculation when_required
           aws configure set response_checksum_validation when_required
 
-          printf "ncp deploy permission check\n" > /tmp/ncp-deploy-check.txt
-          aws s3 cp /tmp/ncp-deploy-check.txt s3://imjw-blog/.deploy-check.txt \
-            --endpoint-url https://kr.object.ncloudstorage.com \
-            --acl public-read \
-            --only-show-errors
-          aws s3 rm s3://imjw-blog/.deploy-check.txt \
-            --endpoint-url https://kr.object.ncloudstorage.com \
-            --only-show-errors
-
           aws s3 sync out s3://imjw-blog/ \
             --endpoint-url https://kr.object.ncloudstorage.com \
             --acl public-read \
