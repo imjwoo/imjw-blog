@@ -1,4 +1,4 @@
-const ncpBucketPath = "/imjw-blog";
+const ncpBucketPath = process.env.NCP_BASE_PATH ?? "/imjw-blog";
 
 export const basePath = process.env.NCP_DEPLOY === "true" ? ncpBucketPath : "";
 

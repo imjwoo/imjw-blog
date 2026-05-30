@@ -5,8 +5,9 @@ const withMDX = createMDX({
 });
 
 const isNcpDeploy = process.env.NCP_DEPLOY === "true";
-const ncpBucketPath = "/imjw-blog";
-const ncpObjectStorageUrl = "https://kr.object.ncloudstorage.com/imjw-blog";
+const ncpBucketPath = process.env.NCP_BASE_PATH ?? "/imjw-blog";
+const ncpObjectStorageUrl =
+  process.env.NCP_ASSET_PREFIX ?? "https://kr.object.ncloudstorage.com/imjw-blog";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
