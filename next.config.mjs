@@ -4,15 +4,17 @@ const withMDX = createMDX({
   extension: /\.mdx?$/,
 });
 
-const isGitHubPages = process.env.GITHUB_PAGES === "true";
-const repoName = "imjw-blog";
+const isNcpDeploy = process.env.NCP_DEPLOY === "true";
+const ncpBucketPath = "/imjw-blog";
+const ncpObjectStorageUrl = "https://kr.object.ncloudstorage.com/imjw-blog";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   devIndicators: false,
   output: "export",
-  basePath: isGitHubPages ? `/${repoName}` : "",
-  assetPrefix: isGitHubPages ? `/${repoName}/` : "",
+  basePath: isNcpDeploy ? ncpBucketPath : "",
+  assetPrefix: isNcpDeploy ? ncpObjectStorageUrl : "",
+  trailingSlash: isNcpDeploy,
   pageExtensions: ["ts", "tsx", "md", "mdx"],
   images: {
     unoptimized: true,

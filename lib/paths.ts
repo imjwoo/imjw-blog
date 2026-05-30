@@ -1,6 +1,6 @@
-const githubPagesBasePath = "/imjw-blog";
+const ncpBucketPath = "/imjw-blog";
 
-export const basePath = process.env.GITHUB_PAGES === "true" ? githubPagesBasePath : "";
+export const basePath = process.env.NCP_DEPLOY === "true" ? ncpBucketPath : "";
 
 export function publicPath(path: string) {
   if (!path.startsWith("/") || !basePath || path.startsWith(`${basePath}/`)) {
