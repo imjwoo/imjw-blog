@@ -313,6 +313,7 @@ export type BlogContentBlock =
   | { type: "code"; code: string; language?: string }
   | { type: "bulletedList"; items: string[] }
   | { type: "numberedList"; items: string[] }
+  | { type: "table"; headers: string[]; rows: string[][]; markdown?: string }
   | { type: "image"; src: string; alt?: string }
   | { type: "divider" };
 
