@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   Wrench,
 } from "lucide-react";
+import { notionPosts } from "./notion-posts";
 import { publicPath } from "@/lib/paths";
 
 export const navItems = [
@@ -31,7 +32,29 @@ export const categories = [
   "AI",
   "Cloud",
   "DevOps",
-  "Troubleshooting",
+] as const;
+
+export const blogCategoryGroups = [
+  {
+    label: "CS",
+    items: ["Operating System", "Network", "Database", "Data Structure", "Algorithm"],
+  },
+  {
+    label: "Language",
+    items: ["Python", "Spring Boot", "Shell Script"],
+  },
+  {
+    label: "Cloud",
+    items: ["AWS", "NCP", "Azure", "Architecture"],
+  },
+  {
+    label: "DevOps",
+    items: ["Docker", "GitHub Actions", "Jenkins", "Monitoring"],
+  },
+  {
+    label: "AI",
+    items: ["RAG", "MCP", "Agent", "Prompt"],
+  },
 ] as const;
 
 export const techStacks = [
@@ -283,13 +306,37 @@ export const projects: Project[] = [
 
 export const getProjectBySlug = (slug: string) => projects.find((project) => project.slug === slug);
 
-export const posts = [
+export type BlogContentBlock =
+  | { type: "heading"; level: 1 | 2 | 3; text: string; id: string }
+  | { type: "paragraph"; text: string }
+  | { type: "quote"; text: string }
+  | { type: "code"; code: string; language?: string }
+  | { type: "bulletedList"; items: string[] }
+  | { type: "numberedList"; items: string[] }
+  | { type: "image"; src: string; alt?: string }
+  | { type: "divider" };
+
+export type BlogPost = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  category: string;
+  subcategory?: string;
+  tags: string[];
+  readingTime?: string;
+  toc: string[];
+  content?: BlogContentBlock[];
+};
+
+const fallbackPosts: BlogPost[] = [
   {
     slug: "aws-ecs-cicd-pipeline",
     title: "AWS ECS와 GitHub Actions로 배포 파이프라인 구성하기",
     excerpt: "ECR 이미지 빌드부터 ECS 서비스 업데이트까지 정적 블로그에 정리할 DevOps 글의 예시 구조입니다.",
     date: "2026-05-12",
     category: "DevOps",
+    subcategory: "GitHub Actions",
     tags: ["AWS", "ECS", "GitHub Actions", "CI/CD"],
     readingTime: "6분",
     toc: ["배포 흐름", "ECR 이미지 빌드", "ECS 서비스 업데이트", "체크포인트"],
@@ -300,19 +347,10 @@ export const posts = [
     excerpt: "ALB, NAT Gateway, RDS 배치를 기준으로 3-tier 네트워크를 설명하는 Cloud 카테고리 글입니다.",
     date: "2026-05-08",
     category: "Cloud",
+    subcategory: "Architecture",
     tags: ["VPC", "Subnet", "RDS", "ALB"],
     readingTime: "5분",
     toc: ["왜 서브넷을 나누는가", "Public 영역", "Private 영역", "운영 시 주의점"],
-  },
-  {
-    slug: "timezone-troubleshooting",
-    title: "Docker와 관리형 DB의 타임존 불일치 해결",
-    excerpt: "UTC와 KST가 어긋나는 현상을 인프라 관점에서 추적하고 재발 방지 포인트를 정리합니다.",
-    date: "2026-05-02",
-    category: "Troubleshooting",
-    tags: ["Docker", "Database", "JVM", "KST"],
-    readingTime: "4분",
-    toc: ["문제 상황", "원인 분석", "수정 방법", "회고"],
   },
   {
     slug: "os-process-thread",
@@ -320,6 +358,7 @@ export const posts = [
     excerpt: "CS 기본기를 서버 운영과 장애 분석 맥락에 연결해서 정리하는 글입니다.",
     date: "2026-04-24",
     category: "CS",
+    subcategory: "Operating System",
     tags: ["OS", "Process", "Thread"],
     readingTime: "3분",
     toc: ["정의", "메모리 관점", "장애 분석 연결"],
@@ -330,6 +369,7 @@ export const posts = [
     excerpt: "ALB Target Group 헬스 체크와 애플리케이션 상태 점검을 연결하는 Language 카테고리 글입니다.",
     date: "2026-04-18",
     category: "Language",
+    subcategory: "Spring Boot",
     tags: ["Spring Boot", "Health Check", "ALB"],
     readingTime: "5분",
     toc: ["헬스 체크의 역할", "Actuator 구성", "ALB 연동"],
@@ -340,11 +380,14 @@ export const posts = [
     excerpt: "AI 서비스를 운영 시스템으로 바라볼 때 필요한 지표와 로깅 포인트를 정리합니다.",
     date: "2026-04-10",
     category: "AI",
+    subcategory: "RAG",
     tags: ["RAG", "Monitoring", "LLM"],
     readingTime: "5분",
     toc: ["응답 품질", "검색 지표", "비용과 지연시간"],
   },
 ];
+
+export const posts: BlogPost[] = notionPosts.length > 0 ? notionPosts : fallbackPosts;
 
 export const architectureSteps = [
   { title: "Notion Publish", description: "Notion에서 작성한 글을 발행 대상으로 표시합니다.", icon: BookOpen },

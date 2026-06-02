@@ -10,6 +10,9 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
     pathname === "/" ||
     pathname.startsWith("/about") ||
     pathname.startsWith("/projects") ||
+    pathname === "/blog" ||
+    pathname === "/blog/" ||
+    pathname.startsWith("/blog/") ||
     pathname.startsWith("/architecture");
 
   return (

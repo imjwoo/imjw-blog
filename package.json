@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "build:ncp": "next build",
+    "sync:notion": "node scripts/sync-notion-blog.mjs",
     "start": "next start",
     "lint": "eslint ."
   },
