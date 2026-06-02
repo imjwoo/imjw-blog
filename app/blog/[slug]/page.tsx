@@ -60,6 +60,40 @@ function BlogContent({ content }: { content: BlogContentBlock[] }) {
           );
         }
 
+        if (block.type === "table") {
+          return (
+            <div key={`table-${index}`} className="mt-8 overflow-x-auto">
+              <table className="w-full border-collapse text-left text-sm">
+                {block.headers.length ? (
+                  <thead>
+                    <tr className="border-b border-border">
+                      {block.headers.map((header, cellIndex) => (
+                        <th
+                          key={`${header}-${cellIndex}`}
+                          className="whitespace-nowrap px-3 py-3 font-semibold text-foreground"
+                        >
+                          {header}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                ) : null}
+                <tbody>
+                  {block.rows.map((row, rowIndex) => (
+                    <tr key={`row-${rowIndex}`} className="border-b border-border/70">
+                      {row.map((cell, cellIndex) => (
+                        <td key={`${cell}-${cellIndex}`} className="px-3 py-3 align-top">
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        }
+
         if (block.type === "image") {
           return (
             <figure key={`${block.src}-${index}`}>

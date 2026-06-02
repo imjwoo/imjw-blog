@@ -78,6 +78,48 @@ function headingId(value) {
   return slugify(value) || "section";
 }
 
+function isKeywordParagraph(text) {
+  return /^키워드\s*:/i.test(text.trim());
+}
+
+function tableCellToPlainText(cell = []) {
+  return richTextToPlainText(cell).trim();
+}
+
+function escapeMarkdownTableCell(value) {
+  return value.replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
+}
+
+function tableToMarkdown(headers, rows) {
+  if (!headers.length) return "";
+
+  const headerLine = `| ${headers.map(escapeMarkdownTableCell).join(" | ")} |`;
+  const separatorLine = `| ${headers.map(() => "---").join(" | ")} |`;
+  const rowLines = rows.map((row) => `| ${row.map(escapeMarkdownTableCell).join(" | ")} |`);
+
+  return [headerLine, separatorLine, ...rowLines].join("\n");
+}
+
+async function notionTableToContentBlock(block) {
+  const children = await fetchBlockChildren(block.id);
+  const tableRows = children
+    .filter((child) => child.type === "table_row")
+    .map((row) => row.table_row.cells.map(tableCellToPlainText));
+
+  if (tableRows.length === 0) return null;
+
+  const hasColumnHeader = Boolean(block.table?.has_column_header);
+  const headers = hasColumnHeader ? tableRows[0] : [];
+  const rows = hasColumnHeader ? tableRows.slice(1) : tableRows;
+
+  return {
+    type: "table",
+    headers,
+    rows,
+    markdown: tableToMarkdown(headers, rows),
+  };
+}
+
 async function queryPublishedPages() {
   const pages = [];
   let cursor;
@@ -181,7 +223,8 @@ async function convertBlocksToContent(blocks, slug) {
 
     if (type === "paragraph") {
       const text = richTextToPlainText(block.paragraph.rich_text).trim();
-      if (text) content.push({ type: "paragraph", text });
+      // Tags are already sourced from the Notion database property, so skip inline keyword metadata.
+      if (text && !isKeywordParagraph(text)) content.push({ type: "paragraph", text });
     }
 
     if (["heading_1", "heading_2", "heading_3"].includes(type)) {
@@ -211,6 +254,12 @@ async function convertBlocksToContent(blocks, slug) {
 
     if (type === "divider") {
       content.push({ type: "divider" });
+    }
+
+    if (type === "table") {
+      // Notion tables expose their rows as table_row children, so fetch and preserve them as markdown-style table data.
+      const tableBlock = await notionTableToContentBlock(block);
+      if (tableBlock) content.push(tableBlock);
     }
 
     if (type === "bulleted_list_item") {
