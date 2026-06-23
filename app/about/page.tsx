@@ -61,6 +61,13 @@ const experience: TimelineItem[] = [
 
 const certifications: CertificationItem[] = [
   {
+    title: "Information Processing Engineer",
+    issuer: "HRDK",
+    date: "2026.06",
+    logo: publicPath("/images/about/information-processing-engineer.png"),
+    logoAlt: "Information Processing Engineer badge",
+  },
+  {
     title: "Linux Master Level 2",
     issuer: "KAIT",
     date: "2026.04",
@@ -206,7 +213,7 @@ export default function AboutPage() {
       </Section>
 
       <Section title="Certifications.">
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
           {certifications.map((item) => (
             <div key={item.title} className="rounded-lg border border-border bg-card p-4 transition-colors hover:bg-accent/10">
               <div className="flex items-center gap-3">

@@ -400,6 +400,7 @@ export const architectureSteps = [
 ];
 
 export const credentials = [
+  { title: "정보처리기사", issuer: "한국산업인력공단", date: "2026.06" },
   { title: "리눅스마스터 2급", issuer: "한국정보통신진흥협회", date: "2026.04" },
   { title: "네트워크관리사 2급", issuer: "한국정보통신자격협회", date: "2026.03" },
   { title: "클라우드 운영자 과정", issuer: "경기도 일자리재단", date: "2025.07 - 2025.08" },
