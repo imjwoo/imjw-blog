@@ -61,11 +61,11 @@ const experience: TimelineItem[] = [
 
 const certifications: CertificationItem[] = [
   {
-    title: "Information Processing Engineer",
+    title: "정보처리기사",
     issuer: "HRDK",
     date: "2026.06",
     logo: publicPath("/images/about/information-processing-engineer.png"),
-    logoAlt: "Information Processing Engineer badge",
+    logoAlt: "Information Processing Engineer logo",
   },
   {
     title: "Linux Master Level 2",
@@ -219,7 +219,7 @@ export default function AboutPage() {
               <div className="flex items-center gap-3">
                 <LogoBox src={item.logo} alt={item.logoAlt} imageClassName={item.logoClassName} />
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-semibold">{item.title}</div>
+                  <div className="truncate text-sm font-semibold">{item.title}</div>
                   <div className="mt-1 text-xs text-muted-foreground">{item.issuer}</div>
                   <div className="mt-2 text-xs text-muted-foreground">{item.date}</div>
                 </div>
