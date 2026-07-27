@@ -44,3 +44,21 @@ jobs:
             --endpoint-url https://kr.object.ncloudstorage.com \
             --acl public-read \
             --only-show-errors
+
+      - name: Purge Cloudflare cache
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+        run: |
+          response=$(curl -sS -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}')
+
+          echo "$response" | jq .
+
+          if [ "$(echo "$response" | jq -r '.success')" != "true" ]; then
+            echo "::error::Cloudflare 캐시 퍼지에 실패했습니다."
+            exit 1
+          fi
