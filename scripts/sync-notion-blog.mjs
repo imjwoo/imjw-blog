@@ -123,19 +123,27 @@ async function notionTableToContentBlock(block) {
 async function queryPublishedPages() {
   const pages = [];
   let cursor;
+  // Publish Date 가 미래인 글은 그날 아침 배포 때 자동으로 공개됩니다(예약 발행).
+  const today = new Date().toISOString().slice(0, 10);
 
   do {
     const body = {
       page_size: 100,
       filter: {
-        property: "Published",
-        checkbox: {
-          equals: true,
-        },
+        and: [
+          {
+            property: "Status",
+            select: { equals: "Published" },
+          },
+          {
+            property: "Publish Date",
+            date: { on_or_before: today },
+          },
+        ],
       },
       sorts: [
         {
-          property: "Published At",
+          property: "Publish Date",
           direction: "descending",
         },
       ],
@@ -301,7 +309,7 @@ async function pageToPost(page) {
   const category = selectProperty(properties, "Category");
   const subcategory = selectProperty(properties, "Subcategory");
   const tags = multiSelectProperty(properties, "Tags");
-  const date = dateProperty(properties, "Published At", page.created_time.slice(0, 10));
+  const date = dateProperty(properties, "Publish Date", page.created_time.slice(0, 10));
 
   if (!title || !slug || !category) {
     throw new Error(`Missing required Notion properties for page ${page.id}`);
@@ -324,6 +332,29 @@ async function pageToPost(page) {
   };
 }
 
+/**
+ * 블로그 사이드바에 쓸 카테고리 목록을 글에서 직접 만들어냅니다.
+ * Notion 에서 소분류를 추가/삭제하면 별도 작업 없이 사이트에 반영됩니다.
+ * 대분류·소분류 모두 가나다순으로 정렬합니다.
+ */
+function buildCategoryGroups(posts) {
+  const collator = new Intl.Collator("ko");
+  const grouped = new Map();
+
+  for (const post of posts) {
+    if (!post.category) continue;
+    if (!grouped.has(post.category)) grouped.set(post.category, new Set());
+    if (post.subcategory) grouped.get(post.category).add(post.subcategory);
+  }
+
+  return [...grouped.entries()]
+    .sort(([a], [b]) => collator.compare(a, b))
+    .map(([label, items]) => ({
+      label,
+      items: [...items].sort((a, b) => collator.compare(a, b)),
+    }));
+}
+
 async function main() {
   const pages = await queryPublishedPages();
   const posts = [];
@@ -332,13 +363,19 @@ async function main() {
     posts.push(await pageToPost(page));
   }
 
-  const source = `import type { BlogPost } from "./site";
+  const categoryGroups = buildCategoryGroups(posts);
+
+  const source = `import type { BlogCategoryGroup, BlogPost } from "./site";
 
 export const notionPosts: BlogPost[] = ${JSON.stringify(posts, null, 2)};
+
+export const notionCategoryGroups: BlogCategoryGroup[] = ${JSON.stringify(categoryGroups, null, 2)};
 `;
 
   await writeFile(generatedFile, source);
-  console.log(`Synced ${posts.length} Notion blog post(s).`);
+  console.log(
+    `Synced ${posts.length} Notion blog post(s) across ${categoryGroups.length} categor(ies).`,
+  );
 }
 
 main().catch((error) => {
