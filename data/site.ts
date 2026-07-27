@@ -14,7 +14,7 @@ import {
   ShieldCheck,
   Wrench,
 } from "lucide-react";
-import { notionPosts } from "./notion-posts";
+import { notionCategoryGroups, notionPosts } from "./notion-posts";
 import { publicPath } from "@/lib/paths";
 
 export const navItems = [
@@ -25,37 +25,16 @@ export const navItems = [
   { title: "Architecture", href: "/architecture", icon: Layers3 },
 ];
 
-export const categories = [
-  "All",
-  "CS",
-  "Language",
-  "AI",
-  "Cloud",
-  "DevOps",
-] as const;
+export type BlogCategoryGroup = {
+  label: string;
+  items: string[];
+};
 
-export const blogCategoryGroups = [
-  {
-    label: "CS",
-    items: ["Operating System", "Network", "Database", "Data Structure", "Algorithm"],
-  },
-  {
-    label: "Language",
-    items: ["Python", "Spring Boot", "Shell Script"],
-  },
-  {
-    label: "Cloud",
-    items: ["AWS", "NCP", "Azure", "Architecture"],
-  },
-  {
-    label: "DevOps",
-    items: ["Docker", "GitHub Actions", "Jenkins", "Monitoring"],
-  },
-  {
-    label: "AI",
-    items: ["RAG", "MCP", "Agent", "Prompt"],
-  },
-] as const;
+// 카테고리 목록은 Notion 글에서 자동으로 생성됩니다(scripts/sync-notion-blog.mjs).
+// 여기에 손으로 추가하지 마세요. Notion 에서 분류를 바꾸면 다음 배포 때 반영됩니다.
+export const blogCategoryGroups: BlogCategoryGroup[] = notionCategoryGroups;
+
+export const categories: string[] = ["All", ...notionCategoryGroups.map((group) => group.label)];
 
 export const techStacks = [
   { label: "Cloud", items: ["AWS", "NCP", "Azure", "VPC", "ECS", "RDS", "ALB"], icon: Cloud },
@@ -330,65 +309,7 @@ export type BlogPost = {
   content?: BlogContentBlock[];
 };
 
-const fallbackPosts: BlogPost[] = [
-  {
-    slug: "aws-ecs-cicd-pipeline",
-    title: "AWS ECS와 GitHub Actions로 배포 파이프라인 구성하기",
-    excerpt: "ECR 이미지 빌드부터 ECS 서비스 업데이트까지 정적 블로그에 정리할 DevOps 글의 예시 구조입니다.",
-    date: "2026-05-12",
-    category: "DevOps",
-    subcategory: "GitHub Actions",
-    tags: ["AWS", "ECS", "GitHub Actions", "CI/CD"],
-    readingTime: "6분",
-    toc: ["배포 흐름", "ECR 이미지 빌드", "ECS 서비스 업데이트", "체크포인트"],
-  },
-  {
-    slug: "vpc-subnet-design",
-    title: "VPC Public/Private Subnet 설계 기준",
-    excerpt: "ALB, NAT Gateway, RDS 배치를 기준으로 3-tier 네트워크를 설명하는 Cloud 카테고리 글입니다.",
-    date: "2026-05-08",
-    category: "Cloud",
-    subcategory: "Architecture",
-    tags: ["VPC", "Subnet", "RDS", "ALB"],
-    readingTime: "5분",
-    toc: ["왜 서브넷을 나누는가", "Public 영역", "Private 영역", "운영 시 주의점"],
-  },
-  {
-    slug: "os-process-thread",
-    title: "프로세스와 스레드 차이를 인프라 관점에서 보기",
-    excerpt: "CS 기본기를 서버 운영과 장애 분석 맥락에 연결해서 정리하는 글입니다.",
-    date: "2026-04-24",
-    category: "CS",
-    subcategory: "Operating System",
-    tags: ["OS", "Process", "Thread"],
-    readingTime: "3분",
-    toc: ["정의", "메모리 관점", "장애 분석 연결"],
-  },
-  {
-    slug: "spring-health-check",
-    title: "Spring Boot Health Check 엔드포인트 설계",
-    excerpt: "ALB Target Group 헬스 체크와 애플리케이션 상태 점검을 연결하는 Language 카테고리 글입니다.",
-    date: "2026-04-18",
-    category: "Language",
-    subcategory: "Spring Boot",
-    tags: ["Spring Boot", "Health Check", "ALB"],
-    readingTime: "5분",
-    toc: ["헬스 체크의 역할", "Actuator 구성", "ALB 연동"],
-  },
-  {
-    slug: "rag-monitoring-notes",
-    title: "RAG 서비스 운영에서 관찰해야 할 지표",
-    excerpt: "AI 서비스를 운영 시스템으로 바라볼 때 필요한 지표와 로깅 포인트를 정리합니다.",
-    date: "2026-04-10",
-    category: "AI",
-    subcategory: "RAG",
-    tags: ["RAG", "Monitoring", "LLM"],
-    readingTime: "5분",
-    toc: ["응답 품질", "검색 지표", "비용과 지연시간"],
-  },
-];
-
-export const posts: BlogPost[] = notionPosts.length > 0 ? notionPosts : fallbackPosts;
+export const posts: BlogPost[] = notionPosts;
 
 export const architectureSteps = [
   { title: "Notion Publish", description: "Notion에서 작성한 글을 발행 대상으로 표시합니다.", icon: BookOpen },

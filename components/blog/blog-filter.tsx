@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { blogCategoryGroups, categories, posts } from "@/data/site";
+import { blogCategoryGroups, posts } from "@/data/site";
 import { cn, formatDate } from "@/lib/utils";
 
 export function BlogFilter() {
-  const [activeCategory, setActiveCategory] = useState<(typeof categories)[number] | "All">("All");
+  const [activeCategory, setActiveCategory] = useState<string>("All");
   const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
@@ -25,7 +25,7 @@ export function BlogFilter() {
     setActiveSubcategory(null);
   };
 
-  const handleSubcategoryChange = (category: (typeof categories)[number], subcategory: string) => {
+  const handleSubcategoryChange = (category: string, subcategory: string) => {
     setActiveCategory(category);
     setExpandedCategory(category);
     setActiveSubcategory(subcategory);
