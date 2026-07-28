@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink, Mail } from "lucide-react";
+import { DeployPipeline } from "@/components/sections/deploy-pipeline";
+import { WhoamiTerminal } from "@/components/sections/whoami-terminal";
 import { publicPath } from "@/lib/paths";
 
 type TechItem = {
@@ -63,25 +65,10 @@ function TechIcon({ item }: { item: TechItem }) {
   );
 }
 
-function VisualHero() {
-  return (
-    <section aria-label="Visual hero">
-      <Image
-        src={publicPath("/images/hero-visual.jpg")}
-        alt=""
-        width={1024}
-        height={314}
-        priority
-        className="h-auto w-full object-contain"
-      />
-    </section>
-  );
-}
-
 export default function HomePage() {
   return (
     <div className="space-y-24">
-      <VisualHero />
+      <WhoamiTerminal />
 
       <section>
         <h2 className="text-xl font-semibold">Tech Stack.</h2>
@@ -111,24 +98,14 @@ export default function HomePage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold">Architecture.</h2>
+        <h2 className="text-xl font-semibold">Deploy Pipeline.</h2>
         <p className="mt-2 text-base leading-7 text-muted-foreground">
-          From writing in Notion to publishing on the web — fully automated.
+          이 블로그를 배포하는 파이프라인입니다. 글이 사이트에 반영되기까지의 과정을 하나로 묶어
+          자동화했습니다.
         </p>
-        <Link
-          href="/architecture"
-          aria-label="Architecture 페이지로 이동"
-          className="mt-10 block rounded-xl border border-border bg-background p-5 transition-colors hover:border-muted-foreground"
-        >
-          <Image
-            src={publicPath("/images/architecture-preview.png")}
-            alt="Architecture preview"
-            width={1200}
-            height={760}
-            priority
-            className="mx-auto h-auto w-full object-contain transition-opacity hover:opacity-80"
-          />
-        </Link>
+        <div className="mt-10 overflow-x-auto rounded-xl border border-border bg-background p-6">
+          <DeployPipeline />
+        </div>
       </section>
 
       <section className="pb-16">

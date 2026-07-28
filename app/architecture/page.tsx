@@ -7,7 +7,7 @@ export default function ArchitecturePage() {
       <PageHeader
         eyebrow="Architecture"
         title="글을 쓰고, 변환하고, 정적으로 배포하는 흐름"
-        description="이번 단계에서는 실제 자동화 없이, 향후 Notion과 GitHub Actions, Velog, NCP 배포를 연결할 수 있는 구조만 차분히 보여줍니다."
+        description="Notion에 쓴 글이 GitHub Actions를 거쳐 NCP Object Storage에 배포되고, Cloudflare를 통해 전달되기까지의 흐름입니다."
       />
 
       <section className="border-t pt-12">
@@ -43,9 +43,9 @@ export default function ArchitecturePage() {
           </p>
         </div>
         <div>
-          <h2 className="text-xl font-semibold">다음 단계 후보</h2>
+          <h2 className="text-xl font-semibold">배포 파이프라인</h2>
           <p className="mt-5 text-sm leading-8 text-muted-foreground">
-            Notion API / GitHub Actions / Markdown 변환 / Velog 발행 / NCP Object Storage / Global CDN
+            Notion API / GitHub Actions / MDX 변환 / NCP Object Storage / Cloudflare Worker / Cache Purge
           </p>
         </div>
       </section>
