@@ -124,7 +124,9 @@ async function queryPublishedPages() {
   const pages = [];
   let cursor;
   // Publish Date 가 미래인 글은 그날 아침 배포 때 자동으로 공개됩니다(예약 발행).
-  const today = new Date().toISOString().slice(0, 10);
+  // 워크플로는 07:00 KST(= 전날 22:00 UTC)에 돌기 때문에 UTC 로 날짜를 계산하면
+  // 하루 밀립니다. Notion 에 적는 날짜와 같은 기준이 되도록 KST 로 맞춥니다.
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul" }).format(new Date());
 
   do {
     const body = {
