@@ -317,7 +317,7 @@ export const architectureSteps = [
   { title: "Markdown 변환", description: "Notion 블록을 MDX/Markdown 형식으로 변환합니다.", icon: Code2 },
   { title: "Repo Commit", description: "변환된 콘텐츠를 GitHub 저장소의 content/blog 경로에 커밋합니다.", icon: Server },
   { title: "Next.js Deploy", description: "정적 빌드 결과물을 CDN 친화적인 형태로 배포합니다.", icon: Cloud },
-  { title: "Velog Publish", description: "동일 콘텐츠를 Velog에도 자동 발행하는 확장 지점입니다.", icon: Wrench },
+  { title: "Cache Purge", description: "배포 후 Cloudflare 엣지 캐시를 비워 새 글이 바로 보이게 합니다.", icon: Wrench },
 ];
 
 export const credentials = [
