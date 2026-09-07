@@ -184,6 +184,22 @@ async function fetchBlockChildren(blockId) {
   return blocks;
 }
 
+async function fetchContentBlocks(blockId) {
+  const directChildren = await fetchBlockChildren(blockId);
+  const contentBlocks = [];
+  const nonContentContainers = new Set(["table", "child_page", "child_database"]);
+
+  for (const block of directChildren) {
+    contentBlocks.push(block);
+
+    if (block.has_children && !nonContentContainers.has(block.type)) {
+      contentBlocks.push(...(await fetchContentBlocks(block.id)));
+    }
+  }
+
+  return contentBlocks;
+}
+
 function imageExtension(url, contentType) {
   const pathname = new URL(url).pathname;
   const ext = path.extname(pathname).toLowerCase();
@@ -337,9 +353,9 @@ async function pageToPost(page) {
   }
 
   assertSafeSlug(slug);
-  const blocks = await fetchBlockChildren(page.id);
+  const blocks = await fetchContentBlocks(page.id);
   console.log(
-    `[Notion blocks] ${slug}: ${blocks.length} top-level block(s), ${blocks.filter((block) => block.type === "code").length} code block(s)`,
+    `[Notion blocks] ${slug}: ${blocks.length} content block(s), ${blocks.filter((block) => block.type === "code").length} code block(s)`,
   );
   const { content, toc } = await convertBlocksToContent(blocks, slug, title);
 
