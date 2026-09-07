@@ -1,5 +1,6 @@
 import { execFile } from "node:child_process";
-import { access, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { access, copyFile, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 
@@ -7,6 +8,9 @@ const execFileAsync = promisify(execFile);
 
 export const D2_CAPTION_MARKER = "diagram:d2";
 
+const D2_CACHE_SCHEMA_VERSION = "1";
+const D2_LAYOUT = "dagre";
+const D2_PAD = "32";
 const SAFE_SLUG_PATTERN = /^[a-z0-9가-힣]+(?:-[a-z0-9가-힣]+)*$/u;
 const ICON_PATTERN = /^\s*icon\s*:\s*(?:"([^"]+)"|'([^']+)'|([^\s#{}]+))\s*(?:#.*)?$/gm;
 
@@ -73,6 +77,39 @@ export async function validateLocalIconReferences(source, assetRoot) {
   return references;
 }
 
+export async function createD2CacheKey({
+  source,
+  assetRoot,
+  iconReferences,
+  d2Version = process.env.D2_VERSION || "unknown",
+}) {
+  const root = path.resolve(assetRoot);
+  const hash = createHash("sha256");
+
+  hash.update(`cache-schema:${D2_CACHE_SCHEMA_VERSION}\0`);
+  hash.update(`d2-version:${d2Version}\0`);
+  hash.update(`layout:${D2_LAYOUT}\0pad:${D2_PAD}\0`);
+  hash.update(source);
+
+  for (const reference of [...new Set(iconReferences)].sort()) {
+    const filePath = path.resolve(root, reference);
+    assertPathWithin(root, filePath, "D2 icon");
+    hash.update(`\0icon:${reference}\0`);
+    hash.update(await readFile(filePath));
+  }
+
+  return hash.digest("hex");
+}
+
+async function readValidSvg(filePath) {
+  try {
+    const svg = await readFile(filePath, "utf8");
+    return svg.includes("<svg") ? svg : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function resetGeneratedBlogImages(blogImageRoot) {
   const root = path.resolve(blogImageRoot);
   await rm(root, { recursive: true, force: true });
@@ -86,6 +123,7 @@ export async function renderD2Diagram({
   blockIndex,
   rootDir = process.cwd(),
   d2Bin = process.env.D2_BIN || "d2",
+  d2Version = process.env.D2_VERSION || "unknown",
 }) {
   if (!source.trim()) {
     throw new Error(`D2 render failed for ${slug} block ${blockIndex + 1}: source is empty`);
@@ -96,26 +134,46 @@ export async function renderD2Diagram({
 
   const assetRoot = path.resolve(rootDir, "public", "images", "diagram-icons");
   const blogImageRoot = path.resolve(rootDir, "public", "images", "blog");
+  const cacheRoot = path.resolve(rootDir, ".cache", "d2");
   const { directory, filePath } = resolveDiagramOutput(blogImageRoot, slug, blockIndex);
   const temporarySource = path.resolve(assetRoot, `.render-${slug}-${blockIndex + 1}.d2`);
 
   assertPathWithin(assetRoot, temporarySource, "Temporary D2 source");
-  await validateLocalIconReferences(source, assetRoot);
+  const iconReferences = await validateLocalIconReferences(source, assetRoot);
+  const cacheKey = await createD2CacheKey({ source, assetRoot, iconReferences, d2Version });
+  const cachePath = path.resolve(cacheRoot, `${cacheKey}.svg`);
+  assertPathWithin(cacheRoot, cachePath, "D2 cache");
   await mkdir(assetRoot, { recursive: true });
   await mkdir(directory, { recursive: true });
+  await mkdir(cacheRoot, { recursive: true });
+
+  const cachedSvg = await readValidSvg(cachePath);
+  if (cachedSvg) {
+    await copyFile(cachePath, filePath);
+    console.log(`[D2 cache hit] ${slug} block ${blockIndex + 1}: ${cacheKey.slice(0, 12)}`);
+    return {
+      type: "diagram",
+      src: `/images/blog/${slug}/${path.basename(filePath)}`,
+      alt: `${postTitle} 다이어그램 ${blockIndex + 1}`,
+    };
+  }
+
+  await rm(cachePath, { force: true });
   await writeFile(temporarySource, source, "utf8");
 
   try {
     await execFileAsync(
       d2Bin,
-      ["--layout=dagre", "--pad=32", temporarySource, filePath],
+      [`--layout=${D2_LAYOUT}`, `--pad=${D2_PAD}`, temporarySource, filePath],
       { timeout: 30_000, maxBuffer: 10 * 1024 * 1024 },
     );
 
-    const svg = await readFile(filePath, "utf8");
-    if (!svg.includes("<svg")) {
+    const svg = await readValidSvg(filePath);
+    if (!svg) {
       throw new Error("renderer did not produce an SVG document");
     }
+    await writeFile(cachePath, svg, "utf8");
+    console.log(`[D2 cache miss] ${slug} block ${blockIndex + 1}: ${cacheKey.slice(0, 12)}`);
   } catch (error) {
     await rm(filePath, { force: true });
     const detail = error?.stderr?.trim() || error?.message || String(error);
@@ -141,6 +199,7 @@ export async function convertNotionCodeBlock({
   blockIndex,
   rootDir,
   d2Bin,
+  d2Version,
 }) {
   if (!isD2DiagramCaption(caption)) {
     return { type: "code", code, language };
@@ -153,5 +212,6 @@ export async function convertNotionCodeBlock({
     blockIndex,
     rootDir,
     d2Bin,
+    d2Version,
   });
 }

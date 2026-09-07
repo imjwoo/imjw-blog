@@ -86,7 +86,7 @@ test("removes stale generated blog images", async () => {
   }
 });
 
-test("renders SVG and reports malformed D2 with post context", async (t) => {
+test("renders SVG, reuses valid cache, and invalidates changed inputs", async (t) => {
   const d2Bin = process.env.D2_BIN;
   if (!d2Bin) {
     t.skip("D2_BIN is not configured");
@@ -100,10 +100,12 @@ test("renders SVG and reports malformed D2 with post context", async (t) => {
     path.join(iconDirectory, "test.svg"),
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4"/></svg>',
   );
+  const code = 'symbol: "" {\n  shape: image\n  icon: ./icons/test.svg\n  width: 32\n  height: 32\n}\nsymbol -> b';
+  const d2Version = "test-v1";
 
   try {
     const block = await convertNotionCodeBlock({
-      code: 'symbol: "" {\n  shape: image\n  icon: ./icons/test.svg\n  width: 32\n  height: 32\n}\nsymbol -> b',
+      code,
       caption: "diagram:d2",
       language: "plain text",
       slug: "sample-post",
@@ -111,6 +113,7 @@ test("renders SVG and reports malformed D2 with post context", async (t) => {
       blockIndex: 4,
       rootDir: root,
       d2Bin,
+      d2Version,
     });
     assert.deepEqual(block, {
       type: "diagram",
@@ -120,6 +123,58 @@ test("renders SVG and reports malformed D2 with post context", async (t) => {
     assert.match(
       await readFile(path.join(root, "public", "images", "blog", "sample-post", "diagram-005.svg"), "utf8"),
       /<svg/,
+    );
+
+    await resetGeneratedBlogImages(path.join(root, "public", "images", "blog"));
+    const cachedBlock = await convertNotionCodeBlock({
+      code,
+      caption: "diagram:d2",
+      language: "plain text",
+      slug: "sample-post",
+      postTitle: "샘플 글",
+      blockIndex: 4,
+      rootDir: root,
+      d2Bin: path.join(root, "missing-d2"),
+      d2Version,
+    });
+    assert.deepEqual(cachedBlock, block);
+    assert.match(
+      await readFile(path.join(root, "public", "images", "blog", "sample-post", "diagram-005.svg"), "utf8"),
+      /<svg/,
+    );
+
+    await assert.rejects(
+      convertNotionCodeBlock({
+        code: `${code}\nb -> c`,
+        caption: "diagram:d2",
+        language: "plain text",
+        slug: "sample-post",
+        postTitle: "샘플 글",
+        blockIndex: 4,
+        rootDir: root,
+        d2Bin: path.join(root, "missing-d2"),
+        d2Version,
+      }),
+      /D2 render failed for sample-post block 5/,
+    );
+
+    await writeFile(
+      path.join(iconDirectory, "test.svg"),
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10"/></svg>',
+    );
+    await assert.rejects(
+      convertNotionCodeBlock({
+        code,
+        caption: "diagram:d2",
+        language: "plain text",
+        slug: "sample-post",
+        postTitle: "샘플 글",
+        blockIndex: 4,
+        rootDir: root,
+        d2Bin: path.join(root, "missing-d2"),
+        d2Version,
+      }),
+      /D2 render failed for sample-post block 5/,
     );
 
     await assert.rejects(
@@ -132,6 +187,7 @@ test("renders SVG and reports malformed D2 with post context", async (t) => {
         blockIndex: 6,
         rootDir: root,
         d2Bin,
+        d2Version,
       }),
       /D2 render failed for sample-post block 7/,
     );
