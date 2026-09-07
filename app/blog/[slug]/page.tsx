@@ -113,7 +113,7 @@ function BlogContent({ content }: { content: BlogContentBlock[] }) {
           return (
             <figure
               key={`${block.src}-${index}`}
-              className="relative left-1/2 my-10 w-[min(1120px,calc(100vw-2rem))] -translate-x-1/2"
+              className="my-10 w-full"
             >
               <a
                 href={block.src}
