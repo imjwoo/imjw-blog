@@ -1,5 +1,10 @@
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import {
+  assertSafeSlug,
+  convertNotionCodeBlock,
+  resetGeneratedBlogImages,
+} from "./d2-diagrams.mjs";
 
 const notionToken = process.env.NOTION_TOKEN;
 const databaseId = process.env.NOTION_DATABASE_ID;
@@ -218,13 +223,13 @@ async function flushList(blocks, listState) {
   listState.items = [];
 }
 
-async function convertBlocksToContent(blocks, slug) {
+async function convertBlocksToContent(blocks, slug, postTitle) {
   const content = [];
   const toc = [];
   const listState = { type: null, items: [] };
   let imageIndex = 1;
 
-  for (const block of blocks) {
+  for (const [blockIndex, block] of blocks.entries()) {
     const type = block.type;
 
     if (type !== "bulleted_list_item" && type !== "numbered_list_item") {
@@ -259,7 +264,19 @@ async function convertBlocksToContent(blocks, slug) {
 
     if (type === "code") {
       const code = richTextToPlainText(block.code.rich_text);
-      content.push({ type: "code", code, language: block.code.language });
+      const caption = richTextToPlainText(block.code.caption);
+
+      content.push(
+        await convertNotionCodeBlock({
+          code,
+          caption,
+          language: block.code.language,
+          slug,
+          postTitle,
+          blockIndex,
+          rootDir,
+        }),
+      );
     }
 
     if (type === "divider") {
@@ -317,9 +334,9 @@ async function pageToPost(page) {
     throw new Error(`Missing required Notion properties for page ${page.id}`);
   }
 
-  await rm(path.join(blogImageRoot, slug), { recursive: true, force: true });
+  assertSafeSlug(slug);
   const blocks = await fetchBlockChildren(page.id);
-  const { content, toc } = await convertBlocksToContent(blocks, slug);
+  const { content, toc } = await convertBlocksToContent(blocks, slug, title);
 
   return {
     slug,
@@ -360,6 +377,10 @@ function buildCategoryGroups(posts) {
 async function main() {
   const pages = await queryPublishedPages();
   const posts = [];
+
+  // Notion에서 삭제되거나 다이어그램이 제거된 글의 이전 산출물이 배포에 남지 않도록
+  // 동기화 시작 시 생성 이미지 루트를 비우고 현재 콘텐츠만 다시 만듭니다.
+  await resetGeneratedBlogImages(blogImageRoot);
 
   for (const page of pages) {
     posts.push(await pageToPost(page));

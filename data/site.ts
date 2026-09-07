@@ -294,6 +294,7 @@ export type BlogContentBlock =
   | { type: "numberedList"; items: string[] }
   | { type: "table"; headers: string[]; rows: string[][]; markdown?: string }
   | { type: "image"; src: string; alt?: string }
+  | { type: "diagram"; src: string; alt: string; caption?: string }
   | { type: "divider" };
 
 export type BlogPost = {

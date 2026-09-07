@@ -109,6 +109,32 @@ function BlogContent({ content }: { content: BlogContentBlock[] }) {
           );
         }
 
+        if (block.type === "diagram") {
+          return (
+            <figure
+              key={`${block.src}-${index}`}
+              className="relative left-1/2 my-10 w-[min(1120px,calc(100vw-2rem))] -translate-x-1/2"
+            >
+              <a
+                href={block.src}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`${block.alt} 원본 열기`}
+                className="block"
+              >
+                <Image
+                  src={block.src}
+                  alt={block.alt}
+                  width={2200}
+                  height={1000}
+                  className="h-auto w-full rounded-lg border border-border bg-white object-contain"
+                />
+              </a>
+              {block.caption ? <figcaption>{block.caption}</figcaption> : null}
+            </figure>
+          );
+        }
+
         return <hr key={`hr-${index}`} />;
       })}
     </div>
