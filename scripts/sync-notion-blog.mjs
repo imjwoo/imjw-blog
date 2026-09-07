@@ -265,17 +265,19 @@ async function convertBlocksToContent(blocks, slug, postTitle) {
     if (type === "code") {
       const code = richTextToPlainText(block.code.rich_text);
       const caption = richTextToPlainText(block.code.caption);
+      const convertedBlock = await convertNotionCodeBlock({
+        code,
+        caption,
+        language: block.code.language,
+        slug,
+        postTitle,
+        blockIndex,
+        rootDir,
+      });
 
-      content.push(
-        await convertNotionCodeBlock({
-          code,
-          caption,
-          language: block.code.language,
-          slug,
-          postTitle,
-          blockIndex,
-          rootDir,
-        }),
+      content.push(convertedBlock);
+      console.log(
+        `[Notion code] ${slug} block ${blockIndex + 1}: caption=${JSON.stringify(caption)}, output=${convertedBlock.type}`,
       );
     }
 
@@ -336,6 +338,9 @@ async function pageToPost(page) {
 
   assertSafeSlug(slug);
   const blocks = await fetchBlockChildren(page.id);
+  console.log(
+    `[Notion blocks] ${slug}: ${blocks.length} top-level block(s), ${blocks.filter((block) => block.type === "code").length} code block(s)`,
+  );
   const { content, toc } = await convertBlocksToContent(blocks, slug, title);
 
   return {
@@ -387,6 +392,10 @@ async function main() {
   }
 
   const categoryGroups = buildCategoryGroups(posts);
+  const diagramCount = posts.reduce(
+    (count, post) => count + post.content.filter((block) => block.type === "diagram").length,
+    0,
+  );
 
   const source = `import type { BlogCategoryGroup, BlogPost } from "./site";
 
@@ -397,7 +406,7 @@ export const notionCategoryGroups: BlogCategoryGroup[] = ${JSON.stringify(catego
 
   await writeFile(generatedFile, source);
   console.log(
-    `Synced ${posts.length} Notion blog post(s) across ${categoryGroups.length} categor(ies).`,
+    `Synced ${posts.length} Notion blog post(s) across ${categoryGroups.length} categor(ies), with ${diagramCount} D2 diagram(s).`,
   );
 }
 
