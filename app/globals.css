@@ -83,3 +83,15 @@ body {
 .prose-cloud ul {
   @apply mt-5 list-disc space-y-3 pl-5;
 }
+
+.prose-cloud pre {
+  @apply mt-6 overflow-x-auto rounded-lg border bg-muted p-4 font-mono text-[13px] leading-6 text-foreground;
+}
+
+.prose-cloud pre code {
+  @apply bg-transparent p-0 font-mono text-inherit;
+}
+
+.prose-cloud :not(pre) > code {
+  @apply rounded border bg-muted px-1.5 py-0.5 font-mono text-[0.85em] text-foreground;
+}
