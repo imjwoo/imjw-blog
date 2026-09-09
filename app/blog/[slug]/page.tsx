@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PostViewCount } from "@/components/analytics/blog-analytics";
 import type { BlogContentBlock } from "@/data/site";
 import { posts } from "@/data/site";
 import { formatDate } from "@/lib/utils";
@@ -166,7 +167,11 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
           {post.subcategory ? ` / ${post.subcategory}` : ""}
         </p>
         <h1 className="mt-5 text-3xl font-semibold leading-tight tracking-normal sm:text-5xl">{post.title}</h1>
-        <p className="mt-5 text-sm text-muted-foreground">{formatDate(post.date)}</p>
+        <p className="mt-5 flex items-center gap-3 text-sm text-muted-foreground">
+          <span>{formatDate(post.date)}</span>
+          <span aria-hidden="true">·</span>
+          <PostViewCount slug={post.slug} />
+        </p>
         <p className="mt-6 text-base leading-8 text-muted-foreground">{post.excerpt}</p>
         <p className="mt-5 text-xs text-muted-foreground">{post.tags.join(" / ")}</p>
       </header>

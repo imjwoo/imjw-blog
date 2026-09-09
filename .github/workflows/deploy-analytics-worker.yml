@@ -1,0 +1,51 @@
+name: Deploy Analytics Worker
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-analytics-worker
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: analytics-worker
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_WORKERS_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+      CLOUDFLARE_D1_DATABASE_ID: ${{ secrets.CLOUDFLARE_D1_DATABASE_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: analytics-worker/package-lock.json
+
+      - name: Install Worker dependencies
+        run: npm ci
+
+      - name: Create Wrangler configuration
+        run: node scripts/create-wrangler-config.mjs
+
+      - name: Apply D1 migrations
+        run: npm run migrate
+
+      - name: Register visitor hash secret
+        env:
+          ANALYTICS_HASH_SECRET: ${{ secrets.ANALYTICS_HASH_SECRET }}
+        run: printf '%s' "$ANALYTICS_HASH_SECRET" | npx wrangler secret put ANALYTICS_HASH_SECRET
+
+      - name: Deploy Worker
+        run: npm run deploy

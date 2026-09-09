@@ -8,6 +8,7 @@
     "build:ncp": "next build",
     "sync:notion": "node scripts/sync-notion-blog.mjs",
     "test:d2": "node --test scripts/d2-diagrams.test.mjs",
+    "test:analytics": "node --test analytics-worker/src/index.test.mjs",
     "start": "next start",
     "lint": "eslint ."
   },
