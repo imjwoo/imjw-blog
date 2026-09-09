@@ -285,9 +285,12 @@ export const projects: Project[] = [
 
 export const getProjectBySlug = (slug: string) => projects.find((project) => project.slug === slug);
 
+// 문단 안의 인라인 조각. code 가 true 면 인라인 코드로 렌더된다.
+export type BlogInlineSegment = { text: string; code?: boolean };
+
 export type BlogContentBlock =
   | { type: "heading"; level: 1 | 2 | 3; text: string; id: string }
-  | { type: "paragraph"; text: string }
+  | { type: "paragraph"; text: string; spans?: BlogInlineSegment[] }
   | { type: "quote"; text: string }
   | { type: "code"; code: string; language?: string }
   | { type: "bulletedList"; items: string[] }
