@@ -26,6 +26,19 @@ function BlogContent({ content }: { content: BlogContentBlock[] }) {
         }
 
         if (block.type === "paragraph") {
+          if (block.spans) {
+            return (
+              <p key={`${block.text}-${index}`}>
+                {block.spans.map((span, spanIndex) =>
+                  span.code ? (
+                    <code key={spanIndex}>{span.text}</code>
+                  ) : (
+                    <span key={spanIndex}>{span.text}</span>
+                  ),
+                )}
+              </p>
+            );
+          }
           return <p key={`${block.text}-${index}`}>{block.text}</p>;
         }
 

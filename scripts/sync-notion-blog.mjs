@@ -53,6 +53,28 @@ function richTextToPlainText(richText = []) {
   return richText.map((item) => item.plain_text ?? "").join("");
 }
 
+// Notion rich text 를 인라인 조각으로 변환한다. 인접한 같은 종류(코드/일반)는 하나로 합친다.
+// 인라인 코드가 하나도 없으면 spans 를 돌려주지 않아서(undefined) 생성 데이터가 커지지 않게 한다.
+function richTextToInlineSegments(richText = []) {
+  const spans = [];
+
+  for (const item of richText) {
+    const text = item.plain_text ?? "";
+    if (!text) continue;
+    const code = Boolean(item.annotations?.code);
+    const last = spans[spans.length - 1];
+    if (last && Boolean(last.code) === code) {
+      last.text += text;
+    } else {
+      spans.push(code ? { text, code: true } : { text });
+    }
+  }
+
+  const text = spans.map((span) => span.text).join("");
+  const hasCode = spans.some((span) => span.code);
+  return { text, spans: hasCode ? spans : undefined };
+}
+
 function titleProperty(properties) {
   const property = properties.Title ?? properties.Name ?? Object.values(properties).find((item) => item.type === "title");
   return richTextToPlainText(property?.title ?? "");
@@ -264,9 +286,12 @@ async function convertBlocksToContent(blocks, slug) {
     }
 
     if (type === "paragraph") {
-      const text = richTextToPlainText(block.paragraph.rich_text).trim();
+      const { text: rawText, spans } = richTextToInlineSegments(block.paragraph.rich_text);
+      const text = rawText.trim();
       // Tags are already sourced from the Notion database property, so skip inline keyword metadata.
-      if (text && !isKeywordParagraph(text)) content.push({ type: "paragraph", text });
+      if (text && !isKeywordParagraph(text)) {
+        content.push(spans ? { type: "paragraph", text, spans } : { type: "paragraph", text });
+      }
     }
 
     if (["heading_1", "heading_2", "heading_3"].includes(type)) {
