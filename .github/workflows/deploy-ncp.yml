@@ -18,8 +18,6 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      D2_VERSION: v0.7.1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,31 +30,6 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Install D2 renderer
-        run: |
-          archive="$RUNNER_TEMP/d2-$D2_VERSION-linux-amd64.tar.gz"
-          install_dir="$RUNNER_TEMP/d2"
-          curl -fsSL \
-            "https://github.com/d2lang/d2/releases/download/$D2_VERSION/d2-$D2_VERSION-linux-amd64.tar.gz" \
-            -o "$archive"
-          mkdir -p "$install_dir"
-          tar -xzf "$archive" -C "$install_dir"
-          echo "$install_dir/d2-$D2_VERSION/bin" >> "$GITHUB_PATH"
-          "$install_dir/d2-$D2_VERSION/bin/d2" --version
-
-      - name: Restore D2 SVG cache
-        uses: actions/cache@v4
-        with:
-          path: .cache/d2
-          key: d2-svg-${{ runner.os }}-${{ env.D2_VERSION }}-${{ github.run_id }}
-          restore-keys: |
-            d2-svg-${{ runner.os }}-${{ env.D2_VERSION }}-
-
-      - name: Test D2 integration
-        env:
-          D2_BIN: d2
-        run: npm run test:d2
 
       - name: Sync Notion posts
         env:

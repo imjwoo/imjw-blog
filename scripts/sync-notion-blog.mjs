@@ -1,10 +1,21 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import {
-  assertSafeSlug,
-  convertNotionCodeBlock,
-  resetGeneratedBlogImages,
-} from "./d2-diagrams.mjs";
+
+const SAFE_SLUG_PATTERN = /^[a-z0-9가-힣]+(?:-[a-z0-9가-힣]+)*$/u;
+
+function assertSafeSlug(slug) {
+  if (!SAFE_SLUG_PATTERN.test(slug)) {
+    throw new Error(`Unsafe blog slug: ${JSON.stringify(slug)}`);
+  }
+}
+
+// Notion에서 삭제되거나 교체된 이미지의 이전 산출물이 배포에 남지 않도록
+// 동기화 시작 시 생성 이미지 루트를 비우고 현재 콘텐츠만 다시 내려받습니다.
+async function resetGeneratedBlogImages(blogImageRoot) {
+  const root = path.resolve(blogImageRoot);
+  await rm(root, { recursive: true, force: true });
+  await mkdir(root, { recursive: true });
+}
 
 const notionToken = process.env.NOTION_TOKEN;
 const databaseId = process.env.NOTION_DATABASE_ID;
@@ -239,13 +250,13 @@ async function flushList(blocks, listState) {
   listState.items = [];
 }
 
-async function convertBlocksToContent(blocks, slug, postTitle) {
+async function convertBlocksToContent(blocks, slug) {
   const content = [];
   const toc = [];
   const listState = { type: null, items: [] };
   let imageIndex = 1;
 
-  for (const [blockIndex, block] of blocks.entries()) {
+  for (const block of blocks) {
     const type = block.type;
 
     if (type !== "bulleted_list_item" && type !== "numbered_list_item") {
@@ -280,21 +291,7 @@ async function convertBlocksToContent(blocks, slug, postTitle) {
 
     if (type === "code") {
       const code = richTextToPlainText(block.code.rich_text);
-      const caption = richTextToPlainText(block.code.caption);
-      const convertedBlock = await convertNotionCodeBlock({
-        code,
-        caption,
-        language: block.code.language,
-        slug,
-        postTitle,
-        blockIndex,
-        rootDir,
-      });
-
-      content.push(convertedBlock);
-      console.log(
-        `[Notion code] ${slug} block ${blockIndex + 1}: caption=${JSON.stringify(caption)}, output=${convertedBlock.type}`,
-      );
+      content.push({ type: "code", code, language: block.code.language });
     }
 
     if (type === "divider") {
@@ -357,7 +354,7 @@ async function pageToPost(page) {
   console.log(
     `[Notion blocks] ${slug}: ${blocks.length} content block(s), ${blocks.filter((block) => block.type === "code").length} code block(s)`,
   );
-  const { content, toc } = await convertBlocksToContent(blocks, slug, title);
+  const { content, toc } = await convertBlocksToContent(blocks, slug);
 
   return {
     slug,
@@ -408,10 +405,6 @@ async function main() {
   }
 
   const categoryGroups = buildCategoryGroups(posts);
-  const diagramCount = posts.reduce(
-    (count, post) => count + post.content.filter((block) => block.type === "diagram").length,
-    0,
-  );
 
   const source = `import type { BlogCategoryGroup, BlogPost } from "./site";
 
@@ -422,7 +415,7 @@ export const notionCategoryGroups: BlogCategoryGroup[] = ${JSON.stringify(catego
 
   await writeFile(generatedFile, source);
   console.log(
-    `Synced ${posts.length} Notion blog post(s) across ${categoryGroups.length} categor(ies), with ${diagramCount} D2 diagram(s).`,
+    `Synced ${posts.length} Notion blog post(s) across ${categoryGroups.length} categor(ies).`,
   );
 }
 
