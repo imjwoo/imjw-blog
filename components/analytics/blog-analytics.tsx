@@ -2,16 +2,26 @@
 
 import { Eye } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 const API_BASE = (process.env.NEXT_PUBLIC_ANALYTICS_API_BASE ?? "/api/analytics").replace(/\/$/, "");
-const ANALYTICS_UPDATED_EVENT = "imjw:analytics-updated";
 
 type AnalyticsStats = {
   today: number;
   postViews?: number;
   posts?: Record<string, number>;
 };
+
+type AnalyticsState = {
+  status: "loading" | "ready" | "error";
+  slug?: string;
+  stats: AnalyticsStats | null;
+};
+
+const AnalyticsContext = createContext<AnalyticsState>({
+  status: "loading",
+  stats: null,
+});
 
 function blogSlugFromPathname(pathname: string) {
   const match = pathname.match(/^\/blog\/([^/]+)\/?$/);
@@ -31,12 +41,14 @@ async function fetchStats(query = "") {
   return (await response.json()) as AnalyticsStats;
 }
 
-export function AnalyticsTracker() {
+export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [state, setState] = useState<AnalyticsState>({ status: "loading", stats: null });
 
   useEffect(() => {
     const controller = new AbortController();
     const slug = blogSlugFromPathname(pathname);
+    setState({ status: "loading", slug, stats: null });
 
     void fetch(`${API_BASE}/visit`, {
       method: "POST",
@@ -47,115 +59,82 @@ export function AnalyticsTracker() {
       signal: controller.signal,
     })
       .then(async (response) => {
-        if (!response.ok) return;
-        const detail = (await response.json()) as AnalyticsStats;
-        window.dispatchEvent(new CustomEvent(ANALYTICS_UPDATED_EVENT, { detail }));
+        if (!response.ok) throw new Error(`Analytics request failed: ${response.status}`);
+        return (await response.json()) as AnalyticsStats;
       })
-      .catch(() => {
-        // 통계 서비스가 잠시 실패해도 페이지 이용에는 영향을 주지 않는다.
+      .then((stats) => setState({ status: "ready", slug, stats }))
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setState({ status: "error", slug, stats: null });
       });
 
     return () => controller.abort();
   }, [pathname]);
 
-  return null;
+  return <AnalyticsContext.Provider value={state}>{children}</AnalyticsContext.Provider>;
+}
+
+export function AnalyticsCountSkeleton({ className = "w-5" }: { className?: string }) {
+  return (
+    <span
+      className={`inline-block h-3 animate-pulse rounded-sm bg-muted align-middle motion-reduce:animate-none ${className}`}
+      aria-hidden="true"
+    />
+  );
 }
 
 export function TodayVisitors() {
-  const [today, setToday] = useState<number | null>(null);
-
-  useEffect(() => {
-    let active = true;
-
-    const load = () => {
-      void fetchStats()
-        .then((stats) => {
-          if (active) setToday(stats.today);
-        })
-        .catch(() => {
-          // 숫자를 읽지 못한 경우 자리만 유지한다.
-        });
-    };
-
-    const handleUpdate = (event: Event) => {
-      const stats = (event as CustomEvent<AnalyticsStats>).detail;
-      if (typeof stats?.today === "number") setToday(stats.today);
-    };
-
-    load();
-    window.addEventListener(ANALYTICS_UPDATED_EVENT, handleUpdate);
-    return () => {
-      active = false;
-      window.removeEventListener(ANALYTICS_UPDATED_EVENT, handleUpdate);
-    };
-  }, []);
+  const { status, stats } = useContext(AnalyticsContext);
 
   return (
     <p className="text-xs text-muted-foreground" aria-label="오늘 방문자 수">
-      Today <span className="font-semibold tabular-nums text-foreground">{today ?? "—"}</span>
+      Today{" "}
+      <span className="inline-block min-w-5 font-semibold tabular-nums text-foreground">
+        {status === "loading" ? <AnalyticsCountSkeleton /> : (stats?.today ?? "—")}
+      </span>
     </p>
   );
 }
 
 export function PostViewCount({ slug }: { slug: string }) {
-  const [views, setViews] = useState<number | null>(null);
-
-  useEffect(() => {
-    let active = true;
-
-    const load = () => {
-      void fetchStats(`?slug=${encodeURIComponent(slug)}`)
-        .then((stats) => {
-          if (active && typeof stats.postViews === "number") setViews(stats.postViews);
-        })
-        .catch(() => {
-          // 통계 장애가 본문 렌더링을 막지 않도록 조용히 실패한다.
-        });
-    };
-
-    const handleUpdate = (event: Event) => {
-      const stats = (event as CustomEvent<AnalyticsStats>).detail;
-      if (typeof stats?.postViews === "number") setViews(stats.postViews);
-    };
-
-    load();
-    window.addEventListener(ANALYTICS_UPDATED_EVENT, handleUpdate);
-    return () => {
-      active = false;
-      window.removeEventListener(ANALYTICS_UPDATED_EVENT, handleUpdate);
-    };
-  }, [slug]);
+  const state = useContext(AnalyticsContext);
+  const isLoading = state.status === "loading" || state.slug !== slug;
+  const views = state.slug === slug ? state.stats?.postViews : undefined;
 
   return (
     <span
       className="inline-flex items-center gap-1.5"
-      aria-label={views === null ? "조회수 불러오는 중" : `조회수 ${views}`}
+      aria-label={isLoading ? "조회수 불러오는 중" : `조회수 ${views ?? "불러오기 실패"}`}
     >
       <Eye className="h-3.5 w-3.5" aria-hidden="true" />
-      <span className="tabular-nums">{views ?? "—"}</span>
+      <span className="inline-block min-w-5 tabular-nums">
+        {isLoading ? <AnalyticsCountSkeleton /> : (views ?? "—")}
+      </span>
     </span>
   );
 }
 
 export function usePostViewCounts(slugs: string[]) {
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [isLoading, setIsLoading] = useState(true);
   const slugKey = useMemo(() => [...new Set(slugs)].sort().join(","), [slugs]);
 
   const load = useCallback(() => {
-    if (!slugKey) return;
+    if (!slugKey) {
+      setIsLoading(false);
+      return;
+    }
 
+    setIsLoading(true);
     void fetchStats(`?slugs=${encodeURIComponent(slugKey)}`)
       .then((stats) => setCounts(stats.posts ?? {}))
-      .catch(() => {
-        // 목록은 조회수 API가 실패해도 그대로 사용할 수 있다.
-      });
+      .catch(() => setCounts({}))
+      .finally(() => setIsLoading(false));
   }, [slugKey]);
 
   useEffect(() => {
     load();
-    window.addEventListener(ANALYTICS_UPDATED_EVENT, load);
-    return () => window.removeEventListener(ANALYTICS_UPDATED_EVENT, load);
   }, [load]);
 
-  return counts;
+  return { counts, isLoading };
 }

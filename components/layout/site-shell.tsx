@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { AnalyticsTracker } from "@/components/analytics/blog-analytics";
+import { AnalyticsProvider } from "@/components/analytics/blog-analytics";
 import { cn } from "@/lib/utils";
 import { TopHeader } from "./top-header";
 
@@ -17,8 +17,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
     pathname.startsWith("/architecture");
 
   return (
-    <>
-      <AnalyticsTracker />
+    <AnalyticsProvider>
       <TopHeader />
       <main className="min-h-screen">
         <div
@@ -30,6 +29,6 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </main>
-    </>
+    </AnalyticsProvider>
   );
 }

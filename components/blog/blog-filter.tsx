@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Eye } from "lucide-react";
-import { usePostViewCounts } from "@/components/analytics/blog-analytics";
+import { AnalyticsCountSkeleton, usePostViewCounts } from "@/components/analytics/blog-analytics";
 import { blogCategoryGroups, posts } from "@/data/site";
 import { cn, formatDate } from "@/lib/utils";
 
@@ -12,7 +12,7 @@ export function BlogFilter() {
   const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const postSlugs = useMemo(() => posts.map((post) => post.slug), []);
-  const postViewCounts = usePostViewCounts(postSlugs);
+  const { counts: postViewCounts, isLoading: areViewCountsLoading } = usePostViewCounts(postSlugs);
 
   const filteredPosts = useMemo(() => {
     if (activeCategory === "All" || activeSubcategory === null) {
@@ -122,13 +122,15 @@ export function BlogFilter() {
                 <p
                   className="inline-flex items-center gap-1.5"
                   aria-label={
-                    postViewCounts[post.slug] === undefined
+                    areViewCountsLoading
                       ? "조회수 불러오는 중"
-                      : `조회수 ${postViewCounts[post.slug]}`
+                      : `조회수 ${postViewCounts[post.slug] ?? "불러오기 실패"}`
                   }
                 >
                   <Eye className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span className="tabular-nums">{postViewCounts[post.slug] ?? "—"}</span>
+                  <span className="inline-block min-w-5 tabular-nums">
+                    {areViewCountsLoading ? <AnalyticsCountSkeleton /> : (postViewCounts[post.slug] ?? "—")}
+                  </span>
                 </p>
                 <p className="font-medium text-[#ea580c]">
                   {post.category}
