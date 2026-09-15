@@ -7,15 +7,11 @@ type SessionBlock =
   | { type: "projects" };
 
 const session: SessionBlock[] = [
-  { type: "command", text: "whoami" },
-  { type: "output", lines: ["임정우 · Cloud Engineer"] },
-  { type: "command", text: "cat profile.txt" },
+  { type: "command", text: "cat learning.txt" },
   {
     type: "output",
     lines: [
-      "아키텍처와 배포 파이프라인을 개발자 관점에서 설계합니다.",
-      "반복되는 운영 작업은 자동화하고, 사람이 개입하는 지점을 줄입니다.",
-      "인프라는 코드로 관리해 재현 가능한 환경을 만듭니다.",
+      "AWS와 Terraform으로 인프라를 설계하고, Kubernetes와 Ansible로 운영을 자동화하며, 안정성과 보안을 함께 공부하고 기록합니다.",
     ],
   },
   { type: "command", text: "ls ./projects" },
@@ -50,7 +46,7 @@ export function WhoamiTerminal() {
                   <Link
                     key={project.slug}
                     href={`/projects/${project.slug}`}
-                    className="text-[13px] text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline sm:text-sm"
+                    className="text-[13px] text-muted-foreground transition-colors hover:text-primary sm:text-sm"
                   >
                     {project.slug}/
                   </Link>
@@ -62,7 +58,7 @@ export function WhoamiTerminal() {
           return (
             <div key={block.lines[0]} className="space-y-1">
               {block.lines.map((line) => (
-                <p key={line} className="text-[13px] leading-7 text-muted-foreground sm:text-sm">
+                <p key={line} className="text-xs leading-6 text-muted-foreground sm:text-[13px]">
                   {line}
                 </p>
               ))}

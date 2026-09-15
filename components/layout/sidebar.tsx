@@ -13,7 +13,7 @@ export function Sidebar() {
         </div>
         <div className="mt-5">
           <p className="text-xl font-semibold">임정우</p>
-          <p className="mt-1 text-sm text-muted-foreground">Cloud Engineer Portfolio</p>
+          <p className="mt-1 text-sm text-muted-foreground">Tech Blog & Portfolio</p>
         </div>
       </Link>
 
@@ -40,10 +40,10 @@ export function Sidebar() {
             <span className="h-2.5 w-2.5 rounded-full bg-green-500" />
           </div>
           <div className="space-y-2 p-4 text-xs">
-            <p><span className="text-primary">$</span> whoami</p>
-            <p className="text-muted-foreground">개발을 이해하는 클라우드 엔지니어</p>
-            <p><span className="text-primary">$</span> focus</p>
-            <p className="text-muted-foreground">AWS · Terraform · CI/CD · Docker</p>
+            <p><span className="text-primary">$</span> cat learning.txt</p>
+            <p className="leading-5 text-muted-foreground">
+              인프라를 설계하고 운영하며 배운 내용을 기록합니다.
+            </p>
           </div>
         </div>
 
@@ -52,7 +52,7 @@ export function Sidebar() {
             <Link className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground" href="https://github.com/imjwoo" target="_blank">
               <Github className="h-4 w-4" />
             </Link>
-            <Link className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground" href="mailto:hello@example.com">
+            <Link className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground" href="mailto:imjwoo15@gmail.com">
               <Mail className="h-4 w-4" />
             </Link>
           </div>
