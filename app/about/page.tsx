@@ -25,8 +25,8 @@ type CertificationItem = {
 const education: TimelineItem[] = [
   {
     title: "INHA University",
-    description: "Bachelor of Arts in Economics",
-    period: "Education",
+    description: "Department of Economics",
+    period: "",
     logo: publicPath("/images/about/inha_emblem.svg"),
     logoAlt: "INHA University logo",
   },
@@ -126,7 +126,7 @@ function TimelineCard({ item }: { item: TimelineItem }) {
       <div className="min-w-0 flex-1">
         <div className="text-sm font-semibold text-foreground">{item.title}</div>
         <div className="mt-1 text-xs text-muted-foreground">{item.description}</div>
-        <div className="mt-2 text-xs text-muted-foreground">{item.period}</div>
+        {item.period ? <div className="mt-2 text-xs text-muted-foreground">{item.period}</div> : null}
         {item.activities ? (
           <ul className="mt-3 space-y-1">
             {item.activities.map((activity) => (
@@ -179,9 +179,8 @@ export default function AboutPage() {
           </div>
           <div className="min-w-0 pt-1">
             <h1 className="text-xl font-semibold">임정우</h1>
-            <p className="mt-2 max-w-xl text-sm leading-7 text-muted-foreground">
-              개발과 운영 사이에서 문제를 작게 나누고, 배운 내용을 꾸준히 기록합니다.
-            </p>
+            <p className="mt-1 text-xs text-muted-foreground">Lim Jeong Woo</p>
+            <p className="mt-1 text-sm font-medium text-primary">Operations Engineer</p>
           </div>
         </div>
         <Link
